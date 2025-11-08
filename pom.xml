@@ -70,7 +70,7 @@
                         <id>default-cli</id>
                         <configuration>
                             <mainClass>
-                                com.gatarita.games.clientmanagementsystem/com.gatarita.games.clientmanagementsystem.HelloApplication
+                                com.gatarita.games.clientmanagementsystem/com.gatarita.games.clientmanagementsystem.ClientManagementApp
                             </mainClass>
                             <launcher>app</launcher>
                             <jlinkZipName>app</jlinkZipName>
