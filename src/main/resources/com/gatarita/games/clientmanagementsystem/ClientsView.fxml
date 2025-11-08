@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="10" style="-fx-background-color: #f5f5f5;" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/17.0.12" fx:controller="com.gatarita.games.clientmanagementsystem.ClientsController">
+    <padding>
+        <Insets bottom="15" left="15" right="15" top="15" />
+    </padding>
+
+    <!-- Toolbar -->
+    <HBox spacing="10" style="-fx-border-color: #cccccc; -fx-border-width: 0 0 1 0;">
+        <padding>
+            <Insets bottom="5" left="5" right="5" top="5" />
+        </padding>
+        <Button onAction="#handleNewClient" style="-fx-padding: 5 15 5 15; -fx-font-weight: bold;" text="+ NEW" />
+        <Button onAction="#handleDeleteClient" style="-fx-padding: 5 15 5 15;" text="- DELETE" />
+        <Region HBox.hgrow="ALWAYS" />
+        <Label text="Filtering Options:" />
+        <CheckBox />
+    </HBox>
+
+    <!-- Clients Table -->
+    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS">
+        <TableView fx:id="clientTable">
+            <columns>
+                <TableColumn fx:id="nameCol" prefWidth="150" text="NAME" />
+                <TableColumn fx:id="companyCol" prefWidth="150" text="COMPANY" />
+                <TableColumn fx:id="jobCol" prefWidth="100" text="JOB" />
+                <TableColumn fx:id="emailCol" prefWidth="200" text="EMAIL" />
+                <TableColumn fx:id="mobileCol" prefWidth="120" text="MOBILE" />
+                <TableColumn fx:id="tagsCol" prefWidth="200" text="TAGS" />
+            </columns>
+        </TableView>
+    </ScrollPane>
+</VBox>
