@@ -12,7 +12,7 @@ public class ClientsController {
 
     public void setDataManager(DataManager dataManager) {
         this.dataManager = dataManager;
-        initializeTable();  // Call this after setting dataManager
+        initializeTable();
     }
 
     private void initializeTable() {
@@ -47,7 +47,7 @@ public class ClientsController {
 
         clientTable.getColumns().addAll(nameCol, companyCol, jobCol, emailCol, mobileCol, tagsCol);
 
-        // IMPORTANT: Bind the table to the observable list
+        // IMPORTANT: Binds the table to the observable list
         // This automatically updates the table when clients list changes
         clientTable.setItems(dataManager.getClients());
     }
