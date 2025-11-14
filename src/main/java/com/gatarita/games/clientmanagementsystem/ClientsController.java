@@ -1,12 +1,14 @@
 package com.gatarita.games.clientmanagementsystem;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
 import javafx.geometry.Insets;
+import javafx.scene.control.*;
 
 public class ClientsController {
 
-    @FXML private TableView<Client> clientTable;
+    @FXML
+    private TableView<Client> clientTable;
 
     private DataManager dataManager;
 
@@ -59,7 +61,7 @@ public class ClientsController {
         dialog.setHeaderText("Add a new client");
 
         javafx.scene.layout.VBox content = new javafx.scene.layout.VBox(10);
-        content.setPadding(new Insets(15));
+//        content.setPadding(new Insets(15));
 
         TextField nameField = new TextField();
         nameField.setPromptText("Full Name");
@@ -81,14 +83,7 @@ public class ClientsController {
         notesArea.setPrefRowCount(4);
         notesArea.setWrapText(true);
 
-        content.getChildren().addAll(
-                new Label("Name:"), nameField,
-                new Label("Company:"), companyField,
-                new Label("Job Title:"), jobField,
-                new Label("Email:"), emailField,
-                new Label("Mobile:"), mobileField,
-                new Label("Notes:"), notesArea
-        );
+        content.getChildren().addAll(new Label("Name:"), nameField, new Label("Company:"), companyField, new Label("Job Title:"), jobField, new Label("Email:"), emailField, new Label("Mobile:"), mobileField, new Label("Notes:"), notesArea);
 
         ScrollPane scrollPane = new ScrollPane(content);
         dialog.getDialogPane().setContent(scrollPane);
@@ -96,8 +91,7 @@ public class ClientsController {
 
         dialog.setResultConverter(buttonType -> {
             if (buttonType == ButtonType.OK && !nameField.getText().isEmpty()) {
-                return new Client(nameField.getText(), companyField.getText(), jobField.getText(),
-                        emailField.getText(), mobileField.getText(), notesArea.getText());
+                return new Client(nameField.getText(), companyField.getText(), jobField.getText(), emailField.getText(), mobileField.getText(), notesArea.getText());
             }
             return null;
         });
@@ -128,5 +122,63 @@ public class ClientsController {
     }
 
     public void handleEditClient(ActionEvent actionEvent) {
+        Client selected = clientTable.getSelectionModel().getSelectedItem();
+        if (selected != null) {
+            Dialog<Client> dialog = new Dialog<>();
+            dialog.setTitle("Edit Client");
+            dialog.setHeaderText("Edit " + selected.getName());
+
+            javafx.scene.layout.VBox content = new javafx.scene.layout.VBox(10);
+//            content.setPadding(new Insets(15));
+
+            TextField nameField = new TextField();
+            nameField.setPromptText("Full Name");
+            nameField.setText(selected.getName());
+
+            TextField companyField = new TextField();
+            companyField.setPromptText("Company");
+            companyField.setText(selected.getCompany());
+
+            TextField jobField = new TextField();
+            jobField.setPromptText("Job Title");
+            jobField.setText(selected.getJobTitle());
+
+            TextField emailField = new TextField();
+            emailField.setPromptText("Email");
+            emailField.setText(selected.getEmail());
+
+            TextField mobileField = new TextField();
+            mobileField.setPromptText("Mobile Number");
+            mobileField.setText(selected.getMobile());
+
+            TextArea notesArea = new TextArea();
+            notesArea.setPromptText("Notes/Tags");
+            notesArea.setPrefRowCount(4);
+            notesArea.setWrapText(true);
+            notesArea.setText(selected.getNotes());
+
+            content.getChildren().addAll(new Label("Name:"), nameField, new Label("Company:"), companyField, new Label("Job Title:"), jobField, new Label("Email:"), emailField, new Label("Mobile:"), mobileField, new Label("Notes:"), notesArea);
+
+            ScrollPane scrollPane = new ScrollPane(content);
+            dialog.getDialogPane().setContent(scrollPane);
+            dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+            dialog.setResultConverter(buttonType -> {
+                if (buttonType == ButtonType.OK && !nameField.getText().isEmpty()) {
+                    Client updatedClient = new Client(nameField.getText(), companyField.getText(), jobField.getText(), emailField.getText(), mobileField.getText(), notesArea.getText());
+                    updatedClient.setId(selected.getId());
+                    return updatedClient;
+                }
+                return null;
+            });
+
+            dialog.showAndWait().ifPresent(client -> dataManager.updateClient(selected, client));
+
+        } else {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("No Selection");
+            alert.setHeaderText("Please select a client to edit");
+            alert.showAndWait();
+        }
     }
 }

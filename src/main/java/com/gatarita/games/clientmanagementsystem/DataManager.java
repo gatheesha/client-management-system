@@ -74,13 +74,13 @@ public class DataManager {
     public void readClientsFromDb() {
         getConnection();
         String query = "select * from client";
-        try(PreparedStatement statement = connection.prepareStatement(query)){
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
             ResultSet rs = statement.executeQuery();
-            while(rs.next()){
+            while (rs.next()) {
                 clients.add(new Client(rs.getString("name"), rs.getString("company"), rs.getString("jobTitle"), rs.getString("email"), rs.getString("mobile"), rs.getString("notes")));
             }
             closeConnection();
-        }catch(SQLException e) {
+        } catch (SQLException e) {
             logger.info(e.toString());
         }
     }
@@ -88,13 +88,32 @@ public class DataManager {
     public void deleteClientsFromDb(int id) {
         getConnection();
         String query = "delete from client where id = ?";
-        try(PreparedStatement statement = connection.prepareStatement(query)){
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, id);
             statement.executeUpdate();
-            logger.info("Client deleted");
+            logger.info("Client " + id + " deleted");
+            closeConnection();
+        } catch (SQLException e) {
+            logger.info(e.toString());
+        }
+    }
+
+    public void updateClientsFromDb(Client client) {
+        getConnection();
+        String query = "update client set name = ?, company = ?, jobTitle = ?, email = ?, mobile = ?, notes = ? where id = ?";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, client.getName());
+            statement.setString(2, client.getCompany());
+            statement.setString(3, client.getCompany());
+            statement.setString(4, client.getEmail());
+            statement.setString(5, client.getMobile());
+            statement.setString(6, client.getNotes());
+            statement.setInt(7, client.getId());
+            statement.executeUpdate();
+            logger.info("Client updated");
 
             closeConnection();
-        }catch (SQLException e){
+        } catch (SQLException e) {
             logger.info(e.toString());
         }
     }
@@ -133,14 +152,23 @@ public class DataManager {
     }
 
     public void addClient(Client client) {
-        clients.add(client);
         insertClientToDb(client);
+        clients.add(client);
     }
 
     public void removeClient(Client client) {
+        deleteClientsFromDb(client.getId());
         clients.remove(client);
         projects.removeIf(p -> p.getClientId() == client.getId());
-        deleteClientsFromDb(client.getId());
+    }
+
+    public void updateClient(Client oldClient, Client newClient) {
+        // sort of a workaround, alternatively maybe we can make client properties observable and update according but this one gets the job done for now
+        int index = clients.indexOf(oldClient);
+        if (index >= 0) {
+            clients.set(index, newClient);
+        }
+        updateClientsFromDb(newClient);
     }
 
     public void addProject(Project project) {

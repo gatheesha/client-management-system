@@ -1,9 +1,11 @@
 package com.gatarita.games.clientmanagementsystem;
+
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+
 import java.io.IOException;
 
 public class MainController {
@@ -22,11 +24,11 @@ public class MainController {
 
         try {
             // Load Projects View
-//            FXMLLoader projectsLoader = new FXMLLoader(getClass().getResource("ProjectsView.fxml"));
-//            VBox projectsView = projectsLoader.load();
-//            ProjectsController projectsController = projectsLoader.getController();
-//            projectsController.setDataManager(dataManager);
-//            projectsTab.setContent(projectsView);
+            FXMLLoader projectsLoader = new FXMLLoader(getClass().getResource("ProjectsView.fxml"));
+            VBox projectsView = projectsLoader.load();
+            ProjectsController projectsController = projectsLoader.getController();
+            projectsController.setDataManager(dataManager);
+            projectsTab.setContent(projectsView);
 
             // Load Clients View
             FXMLLoader clientsLoader = new FXMLLoader(getClass().getResource("ClientsView.fxml"));
