@@ -1,17 +1,102 @@
 package com.gatarita.games.clientmanagementsystem;
 
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+
+import java.sql.*;
 import java.time.LocalDate;
+import java.util.logging.Logger;
 
 public class DataManager {
-    private ObservableList<Client> Clients;
+    private Connection connection;
+    private Logger logger = Logger.getLogger(this.getClass().getName());
+
+    private ObservableList<Client> clients;
     private ObservableList<Project> projects;
 
     public DataManager() {
-        Clients = FXCollections.observableArrayList();
+        clients = FXCollections.observableArrayList();
         projects = FXCollections.observableArrayList();
-        loadSampleData();
+        readClientsFromDb();
+//      loadSampleData();
+    }
+
+    public void getConnection() {
+        try {
+            if (connection == null || connection.isClosed()) {
+                connection = DriverManager.getConnection("jdbc:sqlite:app.db");
+                logger.info("Connected to database");
+                createTable();
+            }
+        } catch (SQLException e) {
+            logger.info(e.toString());
+        }
+    }
+
+    private void createTable() {
+        getConnection();
+        String query = "create table if not exists client (id integer not null primary key autoincrement, name text not null, company text, jobTitle text, email, mobile text not null, notes text)";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.executeUpdate();
+            logger.info("Table created");
+        } catch (SQLException e) {
+            logger.info(e.toString());
+        }
+    }
+
+    private void closeConnection() throws SQLException {
+        if (connection != null || !connection.isClosed()) {
+            connection.close();
+        }
+    }
+
+    public void insertClientToDb(Client client) {
+        getConnection();
+        String query = "insert into client (name, company, jobTitle, email, mobile, notes) values(?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, client.getName());
+            statement.setString(2, client.getCompany());
+            statement.setString(3, client.getCompany());
+            statement.setString(4, client.getEmail());
+            statement.setString(5, client.getMobile());
+            statement.setString(6, client.getNotes());
+            statement.executeUpdate();
+            logger.info("Client inserted");
+
+            closeConnection();
+        } catch (SQLException e) {
+            logger.info(e.toString());
+        }
+    }
+
+    public void readClientsFromDb() {
+        getConnection();
+        String query = "select * from client";
+        try(PreparedStatement statement = connection.prepareStatement(query)){
+            ResultSet rs = statement.executeQuery();
+            while(rs.next()){
+                clients.add(new Client(rs.getString("name"), rs.getString("company"), rs.getString("jobTitle"), rs.getString("email"), rs.getString("mobile"), rs.getString("notes")));
+            }
+            closeConnection();
+        }catch(SQLException e) {
+            logger.info(e.toString());
+        }
+    }
+
+    public void deleteClientsFromDb(int id) {
+        getConnection();
+        String query = "delete from client where id = ?";
+        try(PreparedStatement statement = connection.prepareStatement(query)){
+            statement.setInt(1, id);
+            statement.executeUpdate();
+            logger.info("Client deleted");
+
+            closeConnection();
+        }catch (SQLException e){
+            logger.info(e.toString());
+        }
     }
 
     private void loadSampleData() {
@@ -20,7 +105,7 @@ public class DataManager {
         Client c2 = new Client("Kamal Silva", "Silva Corp", "CEO", "kamal@silva.com", "0772345678", "");
         Client c3 = new Client("Nimal Perera", "Perera Industries", "Director", "nimal@perera.com", "0773456789", "Important client");
 
-        Clients.addAll(c1, c2, c3);
+        clients.addAll(c1, c2, c3);
 
         // Sample projects
         projects.add(new Project("Hema Issara Project", LocalDate.of(2024, 12, 31), LocalDate.of(2024, 1, 15),
@@ -40,7 +125,7 @@ public class DataManager {
     }
 
     public ObservableList<Client> getClients() {
-        return Clients;
+        return clients;
     }
 
     public ObservableList<Project> getProjects() {
@@ -48,12 +133,14 @@ public class DataManager {
     }
 
     public void addClient(Client client) {
-        Clients.add(client);
+        clients.add(client);
+        insertClientToDb(client);
     }
 
     public void removeClient(Client client) {
-        Clients.remove(client);
+        clients.remove(client);
         projects.removeIf(p -> p.getClientId() == client.getId());
+        deleteClientsFromDb(client.getId());
     }
 
     public void addProject(Project project) {
@@ -65,7 +152,7 @@ public class DataManager {
     }
 
     public Client getClientById(int id) {
-        return Clients.stream().filter(c -> c.getId() == id).findFirst().orElse(null);
+        return clients.stream().filter(c -> c.getId() == id).findFirst().orElse(null);
     }
 
     public ObservableList<Project> getProjectsByStatus(Project.Status status) {

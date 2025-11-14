@@ -1,4 +1,5 @@
 package com.gatarita.games.clientmanagementsystem;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.geometry.Insets;
@@ -11,7 +12,7 @@ public class ClientsController {
 
     public void setDataManager(DataManager dataManager) {
         this.dataManager = dataManager;
-        initializeTable();
+        initializeTable();  // Call this after setting dataManager
     }
 
     private void initializeTable() {
@@ -45,6 +46,9 @@ public class ClientsController {
         tagsCol.setPrefWidth(200);
 
         clientTable.getColumns().addAll(nameCol, companyCol, jobCol, emailCol, mobileCol, tagsCol);
+
+        // IMPORTANT: Bind the table to the observable list
+        // This automatically updates the table when clients list changes
         clientTable.setItems(dataManager.getClients());
     }
 
@@ -121,5 +125,8 @@ public class ClientsController {
             alert.setHeaderText("Please select a client to delete");
             alert.showAndWait();
         }
+    }
+
+    public void handleEditClient(ActionEvent actionEvent) {
     }
 }

@@ -16,19 +16,17 @@ public class MainController {
     @FXML
     private Tab clientsTab;
 
-    private DataManager dataManager;
-
     @FXML
     public void initialize() {
-        dataManager = new DataManager();
+        DataManager dataManager = new DataManager();
 
         try {
             // Load Projects View
-            FXMLLoader projectsLoader = new FXMLLoader(getClass().getResource("ProjectsView.fxml"));
-            VBox projectsView = projectsLoader.load();
-            ProjectsController projectsController = projectsLoader.getController();
-            projectsController.setDataManager(dataManager);
-            projectsTab.setContent(projectsView);
+//            FXMLLoader projectsLoader = new FXMLLoader(getClass().getResource("ProjectsView.fxml"));
+//            VBox projectsView = projectsLoader.load();
+//            ProjectsController projectsController = projectsLoader.getController();
+//            projectsController.setDataManager(dataManager);
+//            projectsTab.setContent(projectsView);
 
             // Load Clients View
             FXMLLoader clientsLoader = new FXMLLoader(getClass().getResource("ClientsView.fxml"));
