@@ -37,7 +37,7 @@ public class DataManager {
 
     private void createTable() {
         getConnection();
-        String query = "create table if not exists client (id integer not null primary key autoincrement, name text not null, company text, jobTitle text, email, mobile text not null, notes text)";
+        String query = "create table if not exists client (id integer not null primary key, name text not null, company text, jobTitle text, email, mobile text not null, notes text)";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.executeUpdate();
             logger.info("Table created");
@@ -54,14 +54,15 @@ public class DataManager {
 
     public void insertClientToDb(Client client) {
         getConnection();
-        String query = "insert into client (name, company, jobTitle, email, mobile, notes) values(?, ?, ?, ?, ?, ?)";
+        String query = "insert into client (id, name, company, jobTitle, email, mobile, notes) values(?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setString(1, client.getName());
-            statement.setString(2, client.getCompany());
+            statement.setInt(1, client.getId());
+            statement.setString(2, client.getName());
             statement.setString(3, client.getCompany());
-            statement.setString(4, client.getEmail());
-            statement.setString(5, client.getMobile());
-            statement.setString(6, client.getNotes());
+            statement.setString(4, client.getCompany());
+            statement.setString(5, client.getEmail());
+            statement.setString(6, client.getMobile());
+            statement.setString(7, client.getNotes());
             statement.executeUpdate();
             logger.info("Client inserted");
 
