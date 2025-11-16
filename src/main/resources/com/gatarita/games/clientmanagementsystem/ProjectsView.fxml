@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="10" style="-fx-background-color: #f5f5f5;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gatarita.games.clientmanagementsystem.ProjectsController">
+    <padding>
+        <Insets bottom="15" left="15" right="15" top="15" />
+    </padding>
+
+    <!-- Toolbar -->
+    <HBox fx:id="toolbar" spacing="10" style="-fx-border-color: #cccccc; -fx-border-width: 0 0 1 0;">
+        <padding>
+            <Insets bottom="5" left="5" right="5" top="5" />
+        </padding>
+        <Button onAction="#handleNewProject" style="-fx-padding: 5 15 5 15; -fx-font-weight: bold;" text="+ NEW" />
+        <Button onAction="#handleDeleteProject" style="-fx-padding: 5 15 5 15;" text="- DELETE" />
+        <Region HBox.hgrow="ALWAYS" />
+        <Label text="Filtering Options:" />
+        <CheckBox />
+    </HBox>
+
+    <!-- Scrollable Content -->
+    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS">
+        <VBox spacing="15" style="-fx-padding: 10;">
+
+            <!-- NOT STARTED Section -->
+            <VBox spacing="5" style="-fx-border-color: #000000; -fx-border-width: 1; -fx-padding: 10;">
+                <Label style="-fx-font-weight: bold;" text="NOT STARTED" />
+                <TableView fx:id="pendingTable" prefHeight="120" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="projectNameCol" prefWidth="150" text="PROJECT" />
+                        <TableColumn fx:id="amountCol" prefWidth="100" text="AMOUNT" />
+                        <TableColumn fx:id="dueCol" prefWidth="100" text="DUE ON" />
+                        <TableColumn fx:id="startedCol" prefWidth="100" text="STARTED" />
+                        <TableColumn fx:id="clientCol" prefWidth="150" text="CLIENTS" />
+                        <TableColumn fx:id="statusCol" prefWidth="100" text="STATUS" />
+                    </columns>
+                </TableView>
+                <Button onAction="#handleNewProject" prefWidth="150" style="-fx-padding: 3 8 3 8; -fx-font-size: 10;" text="+ NEW ENTRY" />
+            </VBox>
+
+            <!-- IN PROGRESS Section -->
+            <VBox spacing="5" style="-fx-border-color: #000000; -fx-border-width: 1; -fx-padding: 10;">
+                <Label style="-fx-font-weight: bold;" text="IN PROGRESS" />
+                <TableView fx:id="ongoingTable" prefHeight="120" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="projectNameCol2" prefWidth="150" text="PROJECT" />
+                        <TableColumn fx:id="amountCol2" prefWidth="100" text="AMOUNT" />
+                        <TableColumn fx:id="dueCol2" prefWidth="100" text="DUE ON" />
+                        <TableColumn fx:id="startedCol2" prefWidth="100" text="STARTED" />
+                        <TableColumn fx:id="clientCol2" prefWidth="150" text="CLIENTS" />
+                        <TableColumn fx:id="statusCol2" prefWidth="100" text="STATUS" />
+                    </columns>
+                </TableView>
+                <Button onAction="#handleNewProject" prefWidth="150" style="-fx-padding: 3 8 3 8; -fx-font-size: 10;" text="+ NEW ENTRY" />
+            </VBox>
+
+            <!-- COMPLETED Section -->
+            <VBox spacing="5" style="-fx-border-color: #000000; -fx-border-width: 1; -fx-padding: 10;">
+                <Label style="-fx-font-weight: bold;" text="COMPLETED" />
+                <TableView fx:id="completedTable" prefHeight="120" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="projectNameCol3" prefWidth="150" text="PROJECT" />
+                        <TableColumn fx:id="amountCol3" prefWidth="100" text="AMOUNT" />
+                        <TableColumn fx:id="dueCol3" prefWidth="100" text="DUE ON" />
+                        <TableColumn fx:id="startedCol3" prefWidth="100" text="STARTED" />
+                        <TableColumn fx:id="clientCol3" prefWidth="150" text="CLIENTS" />
+                        <TableColumn fx:id="statusCol3" prefWidth="100" text="STATUS" />
+                    </columns>
+                </TableView>
+                <Button onAction="#handleNewProject" prefWidth="150" style="-fx-padding: 3 8 3 8; -fx-font-size: 10;" text="+ NEW ENTRY" />
+            </VBox>
+        </VBox>
+    </ScrollPane>
+</VBox>
