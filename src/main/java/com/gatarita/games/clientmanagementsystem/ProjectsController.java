@@ -1,10 +1,13 @@
 package com.gatarita.games.clientmanagementsystem;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
+
+import java.sql.SQLException;
 import java.time.LocalDate;
 
 public class ProjectsController {
@@ -129,4 +132,39 @@ public class ProjectsController {
         alert.setHeaderText("Select a project to delete from any table above");
         alert.showAndWait();
     }
+//// there is A WRONG WITH I DON'T KNOW WHAT IT IS. OUTPUT OF CREATING NEW PROJECT IS NOT VISIBLE
+    @FXML
+    private void handleFilterProject() {
+        Dialog<String> dialog = new Dialog<>();
+        dialog.setTitle("Search Project");
+        dialog.setHeaderText("Text to search");
+
+        TextField queryField = new TextField();
+        queryField.setPromptText("Search query");
+
+        javafx.scene.layout.VBox content = new javafx.scene.layout.VBox(10);
+        content.getChildren().addAll(new Label("Name:"), queryField);
+
+        dialog.getDialogPane().setContent(content);
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+        dialog.setResultConverter(buttonType -> {
+            if (buttonType == ButtonType.OK) {
+                return queryField.getText();
+            }
+            return null;
+        });
+
+        dialog.showAndWait().ifPresent(searchText -> {
+            try {
+                ObservableList<Project> filtered = dataManager.filterProject(searchText);
+                pendingTable.setItems(filtered);
+                ongoingTable.setItems(filtered);
+                completedTable.setItems(filtered);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
 }

@@ -1,9 +1,12 @@
 package com.gatarita.games.clientmanagementsystem;
 
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
+
+import java.sql.SQLException;
 
 public class ClientsController {
 
@@ -129,7 +132,7 @@ public class ClientsController {
             dialog.setHeaderText("Edit " + selected.getName());
 
             javafx.scene.layout.VBox content = new javafx.scene.layout.VBox(10);
-//            content.setPadding(new Insets(15));
+            // content.setPadding(new Insets(15));
 
             TextField nameField = new TextField();
             nameField.setPromptText("Full Name");
@@ -181,4 +184,36 @@ public class ClientsController {
             alert.showAndWait();
         }
     }
+    @FXML
+    private void handleFilterClient() {
+        Dialog<String> dialog = new Dialog<>();
+        dialog.setTitle("Search Client");
+        dialog.setHeaderText("Text to search");
+
+        TextField queryField = new TextField();
+        queryField.setPromptText("Search query");
+
+        javafx.scene.layout.VBox content = new javafx.scene.layout.VBox(10);
+        content.getChildren().addAll(new Label("Name:"), queryField);
+
+        dialog.getDialogPane().setContent(content);
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+        dialog.setResultConverter(buttonType -> {
+            if (buttonType == ButtonType.OK) {
+                return queryField.getText();
+            }
+            return null;
+        });
+
+        dialog.showAndWait().ifPresent(searchText -> {
+            try {
+                ObservableList<Client> filtered = dataManager.filterClient(searchText);
+                clientTable.setItems(filtered); // update TableView
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
 }

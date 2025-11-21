@@ -17,8 +17,10 @@
         <Button onAction="#handleNewProject" style="-fx-padding: 5 15 5 15; -fx-font-weight: bold;" text="+ NEW" />
         <Button onAction="#handleDeleteProject" style="-fx-padding: 5 15 5 15;" text="- DELETE" />
         <Region HBox.hgrow="ALWAYS" />
-        <Label text="Filtering Options:" />
-        <CheckBox />
+<!--        <Label text="Filtering Options:" />-->
+<!--        <CheckBox />-->
+        <Button onAction="#handleFilterProject" style="-fx-padding: 5 15 5 15; -fx-font-weight: bold;" text="Filtering Options" />
+
     </HBox>
 
     <!-- Scrollable Content -->

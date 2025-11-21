@@ -1,7 +1,5 @@
 package com.gatarita.games.clientmanagementsystem;
 
-import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -100,7 +98,7 @@ public class DataManager {
 
     public void updateClientsFromDb(Client client) {
         getConnection();
-        String query = "update client set name = ?, company = ?, jobTitle = ?, email = ?, mobile = ?, notes = ? where id = ?";
+        String query = "update  set name = ?, company = ?, jobTitle = ?, email = ?, mobile = ?, notes = ? where id = ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, client.getName());
             statement.setString(2, client.getCompany());
@@ -117,6 +115,56 @@ public class DataManager {
             logger.info(e.toString());
         }
     }
+
+    public ObservableList<Client> filterClient(String searchText) throws SQLException {
+        ObservableList<Client> filtered = FXCollections.observableArrayList();
+        getConnection();
+        String query = "SELECT * FROM client WHERE name LIKE ?";
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setString(1, "%" + searchText + "%");
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Client c = new Client(
+                        rs.getString("name"),
+                        rs.getString("company"),
+                        rs.getString("jobTitle"),
+                        rs.getString("email"),
+                        rs.getString("mobile"),
+                        rs.getString("notes")
+                );
+                c.setId(rs.getInt("id"));
+                filtered.add(c);
+            }
+        }
+        closeConnection();
+        return filtered;
+    }
+
+    public ObservableList<Project> filterProject(String searchText) throws SQLException {
+        ObservableList<Project> filtered = FXCollections.observableArrayList();
+        getConnection();
+        String query = "SELECT * FROM project WHERE name LIKE ?";
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setString(1, "%" + searchText + "%");
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                String name = rs.getString("name");
+                LocalDate dueDate = rs.getDate("dueDate") != null ? rs.getDate("dueDate").toLocalDate() : null;
+                LocalDate startedOn = rs.getDate("startedOn") != null ? rs.getDate("startedOn").toLocalDate() : null;
+                Project.Status status = Project.Status.valueOf(rs.getString("status"));
+                double cost = rs.getDouble("cost");
+                String notes = rs.getString("notes");
+                int clientId = rs.getInt("clientId");
+
+                Project p = new Project(name, dueDate, startedOn, status, cost, notes, clientId);
+                p.setId(rs.getInt("id"));
+                filtered.add(p);
+            }
+        }
+        closeConnection();
+        return filtered;
+    }
+
 
     private void loadSampleData() {
         // Sample clients
@@ -170,6 +218,8 @@ public class DataManager {
         }
         updateClientsFromDb(newClient);
     }
+
+
 
     public void addProject(Project project) {
         projects.add(project);

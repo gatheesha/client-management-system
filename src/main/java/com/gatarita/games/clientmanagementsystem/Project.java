@@ -36,6 +36,9 @@ public class Project implements Serializable {
     public String getNotes() { return notes; }
     public int getClientId() { return clientId; }
 
+    public void setId(int id) {
+        this.id = id;
+    }
     public void setName(String name) { this.name = name; }
     public void setDueDate(LocalDate dueDate) { this.dueDate = dueDate; }
     public void setStartedOn(LocalDate startedOn) { this.startedOn = startedOn; }
