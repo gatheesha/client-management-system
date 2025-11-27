@@ -4,13 +4,12 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox spacing="10" style="-fx-background-color: #f5f5f5;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gatarita.games.clientmanagementsystem.ClientsController">
+<VBox spacing="10" style="-fx-background-color: #f5f5f5;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gatarita.games.clientmanagementsystem.controllers.ClientsController">
     <padding>
         <Insets bottom="15" left="15" right="15" top="15" />
     </padding>
 
-    <!-- Toolbar -->
-    <HBox spacing="10" style="-fx-border-color: #cccccc; -fx-border-width: 0 0 0 0;">
+    <HBox spacing="10" style="-fx-border-color: #cccccc; -fx-border-width: 0 0 1 0;">
         <padding>
             <Insets bottom="5" left="5" right="5" top="5" />
         </padding>
@@ -18,12 +17,10 @@
         <Button onAction="#handleEditClient" style="-fx-padding: 5 15 5 15;" text="EDIT" />
         <Button onAction="#handleDeleteClient" style="-fx-padding: 5 15 5 15;" text="DELETE" />
         <Region HBox.hgrow="ALWAYS" />
-        <Button onAction="#handleFilterClient" style="-fx-padding: 5 15 5 15; -fx-font-weight: bold;" text="Filtering Options" />
-<!--        <Label text="Filtering Options:" />-->
-<!--        <CheckBox />-->
+        <Button onAction="#handleFilterClient" style="-fx-padding: 5 15 5 15; -fx-font-weight: bold;" text="SEARCH" />
+        <Button onAction="#handleExportClients" style="-fx-padding: 5 15 5 15;" text="EXPORT CSV" />
     </HBox>
 
-    <!-- Clients Table -->
     <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS">
         <TableView fx:id="clientTable">
             <columns>

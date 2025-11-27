@@ -1,9 +1,17 @@
-package com.gatarita.games.clientmanagementsystem;
+package com.gatarita.games.clientmanagementsystem.models;
+
+import com.gatarita.games.clientmanagementsystem.interfaces.Exportable;
+import com.gatarita.games.clientmanagementsystem.interfaces.Searchable;
 
 import java.io.Serializable;
 import java.time.LocalDate;
 
-public class Project implements Serializable {
+/**
+ * Project class demonstrating OOP principles:
+ * - Polymorphism: implements Searchable and Exportable
+ * - Encapsulation: private fields with getters/setters
+ */
+public class Project implements Serializable, Searchable, Exportable {
     public enum Status { PENDING, ONGOING, COMPLETED, CANCELLED }
 
     private int id;
@@ -14,10 +22,8 @@ public class Project implements Serializable {
     private double cost;
     private String notes;
     private int clientId;
-    private static int idCounter = 1;
 
     public Project(String name, LocalDate dueDate, LocalDate startedOn, Status status, double cost, String notes, int clientId) {
-        this.id = idCounter++;
         this.name = name;
         this.dueDate = dueDate;
         this.startedOn = startedOn;
@@ -25,6 +31,31 @@ public class Project implements Serializable {
         this.cost = cost;
         this.notes = notes;
         this.clientId = clientId;
+    }
+
+    @Override
+    public boolean matches(String query) {
+        if (query == null || query.trim().isEmpty()) {
+            return true;
+        }
+        String lowerQuery = query.toLowerCase();
+        return (name != null && name.toLowerCase().contains(lowerQuery)) ||
+                (notes != null && notes.toLowerCase().contains(lowerQuery));
+    }
+
+    @Override
+    public String toCSV() {
+        return String.format("%d,\"%s\",\"%s\",\"%s\",\"%s\",%.2f,%d",
+                id, name,
+                dueDate != null ? dueDate.toString() : "",
+                startedOn != null ? startedOn.toString() : "",
+                status, cost, clientId);
+    }
+
+    @Override
+    public String toJSON() {
+        return String.format("{\"id\":%d,\"name\":\"%s\",\"status\":\"%s\",\"cost\":%.2f}",
+                id, name, status, cost);
     }
 
     public int getId() { return id; }
@@ -36,9 +67,7 @@ public class Project implements Serializable {
     public String getNotes() { return notes; }
     public int getClientId() { return clientId; }
 
-    public void setId(int id) {
-        this.id = id;
-    }
+    public void setId(int id) { this.id = id; }
     public void setName(String name) { this.name = name; }
     public void setDueDate(LocalDate dueDate) { this.dueDate = dueDate; }
     public void setStartedOn(LocalDate startedOn) { this.startedOn = startedOn; }

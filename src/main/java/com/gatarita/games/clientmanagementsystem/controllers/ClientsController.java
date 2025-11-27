@@ -1,10 +1,17 @@
-package com.gatarita.games.clientmanagementsystem;
+package com.gatarita.games.clientmanagementsystem.controllers;
 
+
+
+import com.gatarita.games.clientmanagementsystem.models.Client;
+import com.gatarita.games.clientmanagementsystem.database.DataManager;
+import com.gatarita.games.clientmanagementsystem.utils.FileExporter;
+import com.gatarita.games.clientmanagementsystem.utils.ValidationUtils;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
+import java.io.IOException;
 
 import java.sql.SQLException;
 
@@ -23,7 +30,6 @@ public class ClientsController {
     private void initializeTable() {
         clientTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
-        // Clear existing columns
         clientTable.getColumns().clear();
 
         TableColumn<Client, String> nameCol = new TableColumn<>("NAME");
@@ -52,8 +58,6 @@ public class ClientsController {
 
         clientTable.getColumns().addAll(nameCol, companyCol, jobCol, emailCol, mobileCol, tagsCol);
 
-        // IMPORTANT: Binds the table to the observable list
-        // This automatically updates the table when clients list changes
         clientTable.setItems(dataManager.getClients());
     }
 
@@ -64,7 +68,7 @@ public class ClientsController {
         dialog.setHeaderText("Add a new client");
 
         javafx.scene.layout.VBox content = new javafx.scene.layout.VBox(10);
-//        content.setPadding(new Insets(15));
+        content.setPadding(new Insets(15));
 
         TextField nameField = new TextField();
         nameField.setPromptText("Full Name");
@@ -86,7 +90,14 @@ public class ClientsController {
         notesArea.setPrefRowCount(4);
         notesArea.setWrapText(true);
 
-        content.getChildren().addAll(new Label("Name:"), nameField, new Label("Company:"), companyField, new Label("Job Title:"), jobField, new Label("Email:"), emailField, new Label("Mobile:"), mobileField, new Label("Notes:"), notesArea);
+        content.getChildren().addAll(
+                new Label("Name:"), nameField,
+                new Label("Company:"), companyField,
+                new Label("Job Title:"), jobField,
+                new Label("Email:"), emailField,
+                new Label("Mobile:"), mobileField,
+                new Label("Notes:"), notesArea
+        );
 
         ScrollPane scrollPane = new ScrollPane(content);
         dialog.getDialogPane().setContent(scrollPane);
@@ -94,7 +105,14 @@ public class ClientsController {
 
         dialog.setResultConverter(buttonType -> {
             if (buttonType == ButtonType.OK && !nameField.getText().isEmpty()) {
-                return new Client(nameField.getText(), companyField.getText(), jobField.getText(), emailField.getText(), mobileField.getText(), notesArea.getText());
+                return new Client(
+                        nameField.getText(),
+                        companyField.getText(),
+                        jobField.getText(),
+                        emailField.getText(),
+                        mobileField.getText(),
+                        notesArea.getText()
+                );
             }
             return null;
         });
@@ -106,6 +124,17 @@ public class ClientsController {
     private void handleDeleteClient() {
         Client selected = clientTable.getSelectionModel().getSelectedItem();
         if (selected != null) {
+            System.out.println("DEBUG: Attempting to delete client with ID: " + selected.getId());
+
+            if (selected.getId() <= 0) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText("Cannot delete client");
+                alert.setContentText("Client has invalid ID: " + selected.getId());
+                alert.showAndWait();
+                return;
+            }
+
             Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
             confirm.setTitle("Delete Client");
             confirm.setHeaderText("Delete " + selected.getName() + "?");
@@ -114,6 +143,7 @@ public class ClientsController {
             confirm.showAndWait().ifPresent(response -> {
                 if (response == ButtonType.OK) {
                     dataManager.removeClient(selected);
+                    System.out.println("DEBUG: Client deleted successfully");
                 }
             });
         } else {
@@ -124,15 +154,27 @@ public class ClientsController {
         }
     }
 
+    @FXML
     public void handleEditClient(ActionEvent actionEvent) {
         Client selected = clientTable.getSelectionModel().getSelectedItem();
         if (selected != null) {
+            System.out.println("DEBUG: Editing client with ID: " + selected.getId());
+
+            if (selected.getId() <= 0) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText("Cannot edit client");
+                alert.setContentText("Client has invalid ID: " + selected.getId());
+                alert.showAndWait();
+                return;
+            }
+
             Dialog<Client> dialog = new Dialog<>();
             dialog.setTitle("Edit Client");
             dialog.setHeaderText("Edit " + selected.getName());
 
             javafx.scene.layout.VBox content = new javafx.scene.layout.VBox(10);
-            // content.setPadding(new Insets(15));
+            content.setPadding(new Insets(15));
 
             TextField nameField = new TextField();
             nameField.setPromptText("Full Name");
@@ -160,7 +202,14 @@ public class ClientsController {
             notesArea.setWrapText(true);
             notesArea.setText(selected.getNotes());
 
-            content.getChildren().addAll(new Label("Name:"), nameField, new Label("Company:"), companyField, new Label("Job Title:"), jobField, new Label("Email:"), emailField, new Label("Mobile:"), mobileField, new Label("Notes:"), notesArea);
+            content.getChildren().addAll(
+                    new Label("Name:"), nameField,
+                    new Label("Company:"), companyField,
+                    new Label("Job Title:"), jobField,
+                    new Label("Email:"), emailField,
+                    new Label("Mobile:"), mobileField,
+                    new Label("Notes:"), notesArea
+            );
 
             ScrollPane scrollPane = new ScrollPane(content);
             dialog.getDialogPane().setContent(scrollPane);
@@ -168,14 +217,24 @@ public class ClientsController {
 
             dialog.setResultConverter(buttonType -> {
                 if (buttonType == ButtonType.OK && !nameField.getText().isEmpty()) {
-                    Client updatedClient = new Client(nameField.getText(), companyField.getText(), jobField.getText(), emailField.getText(), mobileField.getText(), notesArea.getText());
+                    Client updatedClient = new Client(
+                            nameField.getText(),
+                            companyField.getText(),
+                            jobField.getText(),
+                            emailField.getText(),
+                            mobileField.getText(),
+                            notesArea.getText()
+                    );
                     updatedClient.setId(selected.getId());
                     return updatedClient;
                 }
                 return null;
             });
 
-            dialog.showAndWait().ifPresent(client -> dataManager.updateClient(selected, client));
+            dialog.showAndWait().ifPresent(client -> {
+                dataManager.updateClient(selected, client);
+                System.out.println("DEBUG: Client updated successfully");
+            });
 
         } else {
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -184,6 +243,7 @@ public class ClientsController {
             alert.showAndWait();
         }
     }
+
     @FXML
     private void handleFilterClient() {
         Dialog<String> dialog = new Dialog<>();
@@ -208,12 +268,34 @@ public class ClientsController {
 
         dialog.showAndWait().ifPresent(searchText -> {
             try {
-                ObservableList<Client> filtered = dataManager.filterClient(searchText);
-                clientTable.setItems(filtered); // update TableView
+                if (searchText.trim().isEmpty()) {
+                    clientTable.setItems(dataManager.getClients());
+                } else {
+                    ObservableList<Client> filtered = dataManager.filterClient(searchText);
+                    clientTable.setItems(filtered);
+                }
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         });
     }
+    @FXML
+    private void handleExportClients() {
+        try {
+            String filename = "clients_export_" + java.time.LocalDate.now() + ".csv";
+            FileExporter.exportToCSV(dataManager.getClients(), filename);
 
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Export Successful");
+            alert.setHeaderText("Clients exported successfully!");
+            alert.setContentText("File saved as: " + filename);
+            alert.showAndWait();
+        } catch (IOException e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Export Failed");
+            alert.setHeaderText("Failed to export clients");
+            alert.setContentText(e.getMessage());
+            alert.showAndWait();
+        }
+    }
 }

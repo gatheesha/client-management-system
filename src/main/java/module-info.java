@@ -8,4 +8,10 @@ module com.gatarita.games.clientmanagementsystem {
 
     opens com.gatarita.games.clientmanagementsystem to javafx.fxml;
     exports com.gatarita.games.clientmanagementsystem;
+    exports com.gatarita.games.clientmanagementsystem.models;
+    opens com.gatarita.games.clientmanagementsystem.models to javafx.fxml;
+    exports com.gatarita.games.clientmanagementsystem.database;
+    opens com.gatarita.games.clientmanagementsystem.database to javafx.fxml;
+    exports com.gatarita.games.clientmanagementsystem.controllers;
+    opens com.gatarita.games.clientmanagementsystem.controllers to javafx.fxml;
 }

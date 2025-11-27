@@ -1,5 +1,6 @@
-package com.gatarita.games.clientmanagementsystem;
+package com.gatarita.games.clientmanagementsystem.controllers;
 
+import com.gatarita.games.clientmanagementsystem.database.DataManager;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.VBox;
@@ -23,15 +24,17 @@ public class MainController {
         DataManager dataManager = new DataManager();
 
         try {
-            // Load Projects View
-            FXMLLoader projectsLoader = new FXMLLoader(getClass().getResource("ProjectsView.fxml"));
+            FXMLLoader projectsLoader = new FXMLLoader(
+                    getClass().getResource("/com/gatarita/games/clientmanagementsystem/ProjectsView.fxml")
+            );
             VBox projectsView = projectsLoader.load();
             ProjectsController projectsController = projectsLoader.getController();
             projectsController.setDataManager(dataManager);
             projectsTab.setContent(projectsView);
 
-            // Load Clients View
-            FXMLLoader clientsLoader = new FXMLLoader(getClass().getResource("ClientsView.fxml"));
+            FXMLLoader clientsLoader = new FXMLLoader(
+                    getClass().getResource("/com/gatarita/games/clientmanagementsystem/ClientsView.fxml")
+            );
             VBox clientsView = clientsLoader.load();
             ClientsController clientsController = clientsLoader.getController();
             clientsController.setDataManager(dataManager);
