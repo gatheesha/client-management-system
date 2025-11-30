@@ -4,7 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox spacing="10" style="-fx-background-color: #f5f5f5;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gatarita.games.clientmanagementsystem.controllers.ClientsController">
+<VBox spacing="10" style="-fx-background-color: #f5f5f5;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gatarita.games.clientmanagementsystem.ClientsController">
     <padding>
         <Insets bottom="15" left="15" right="15" top="15" />
     </padding>
@@ -17,8 +17,7 @@
         <Button onAction="#handleEditClient" style="-fx-padding: 5 15 5 15;" text="EDIT" />
         <Button onAction="#handleDeleteClient" style="-fx-padding: 5 15 5 15;" text="DELETE" />
         <Region HBox.hgrow="ALWAYS" />
-        <Button onAction="#handleFilterClient" style="-fx-padding: 5 15 5 15; -fx-font-weight: bold;" text="SEARCH" />
-        <Button onAction="#handleExportClients" style="-fx-padding: 5 15 5 15;" text="EXPORT CSV" />
+        <TextField fx:id="searchField" promptText="Search clients..." prefWidth="250" style="-fx-padding: 5 10 5 10;" />
     </HBox>
 
     <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS">

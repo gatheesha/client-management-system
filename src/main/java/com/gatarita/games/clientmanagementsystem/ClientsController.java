@@ -1,35 +1,32 @@
-package com.gatarita.games.clientmanagementsystem.controllers;
+package com.gatarita.games.clientmanagementsystem;
 
-
-
-import com.gatarita.games.clientmanagementsystem.models.Client;
-import com.gatarita.games.clientmanagementsystem.database.DataManager;
-import com.gatarita.games.clientmanagementsystem.utils.FileExporter;
-import com.gatarita.games.clientmanagementsystem.utils.ValidationUtils;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
-import java.io.IOException;
 
 import java.sql.SQLException;
 
+@SuppressWarnings("unchecked")
 public class ClientsController {
 
     @FXML
     private TableView<Client> clientTable;
+
+    @FXML
+    private TextField searchField;
 
     private DataManager dataManager;
 
     public void setDataManager(DataManager dataManager) {
         this.dataManager = dataManager;
         initializeTable();
+        setupSearchField();
     }
 
     private void initializeTable() {
         clientTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-
         clientTable.getColumns().clear();
 
         TableColumn<Client, String> nameCol = new TableColumn<>("NAME");
@@ -57,8 +54,27 @@ public class ClientsController {
         tagsCol.setPrefWidth(200);
 
         clientTable.getColumns().addAll(nameCol, companyCol, jobCol, emailCol, mobileCol, tagsCol);
-
         clientTable.setItems(dataManager.getClients());
+    }
+
+    private void setupSearchField() {
+        searchField.textProperty().addListener((observable, oldValue, newValue) -> {
+            try {
+                if (newValue == null || newValue.trim().isEmpty()) {
+                    clientTable.setItems(dataManager.getClients());
+                } else {
+                    ObservableList<Client> filtered = dataManager.filterClient(newValue);
+                    clientTable.setItems(filtered);
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Search Error");
+                alert.setHeaderText("Error searching clients");
+                alert.setContentText(e.getMessage());
+                alert.showAndWait();
+            }
+        });
     }
 
     @FXML
@@ -104,7 +120,7 @@ public class ClientsController {
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
 
         dialog.setResultConverter(buttonType -> {
-            if (buttonType == ButtonType.OK && !nameField.getText().isEmpty()) {
+            if (buttonType == ButtonType.OK && !nameField.getText().isEmpty() && !mobileField.getText().isEmpty()) {
                 return new Client(
                         nameField.getText(),
                         companyField.getText(),
@@ -117,15 +133,16 @@ public class ClientsController {
             return null;
         });
 
-        dialog.showAndWait().ifPresent(client -> dataManager.addClient(client));
+        dialog.showAndWait().ifPresent(client -> {
+            dataManager.addClient(client);
+            clientTable.refresh();
+        });
     }
 
     @FXML
     private void handleDeleteClient() {
         Client selected = clientTable.getSelectionModel().getSelectedItem();
         if (selected != null) {
-            System.out.println("DEBUG: Attempting to delete client with ID: " + selected.getId());
-
             if (selected.getId() <= 0) {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Error");
@@ -143,7 +160,7 @@ public class ClientsController {
             confirm.showAndWait().ifPresent(response -> {
                 if (response == ButtonType.OK) {
                     dataManager.removeClient(selected);
-                    System.out.println("DEBUG: Client deleted successfully");
+                    clientTable.refresh();
                 }
             });
         } else {
@@ -158,8 +175,6 @@ public class ClientsController {
     public void handleEditClient(ActionEvent actionEvent) {
         Client selected = clientTable.getSelectionModel().getSelectedItem();
         if (selected != null) {
-            System.out.println("DEBUG: Editing client with ID: " + selected.getId());
-
             if (selected.getId() <= 0) {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Error");
@@ -233,68 +248,13 @@ public class ClientsController {
 
             dialog.showAndWait().ifPresent(client -> {
                 dataManager.updateClient(selected, client);
-                System.out.println("DEBUG: Client updated successfully");
+                clientTable.refresh();
             });
 
         } else {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("No Selection");
             alert.setHeaderText("Please select a client to edit");
-            alert.showAndWait();
-        }
-    }
-
-    @FXML
-    private void handleFilterClient() {
-        Dialog<String> dialog = new Dialog<>();
-        dialog.setTitle("Search Client");
-        dialog.setHeaderText("Text to search");
-
-        TextField queryField = new TextField();
-        queryField.setPromptText("Search query");
-
-        javafx.scene.layout.VBox content = new javafx.scene.layout.VBox(10);
-        content.getChildren().addAll(new Label("Name:"), queryField);
-
-        dialog.getDialogPane().setContent(content);
-        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
-
-        dialog.setResultConverter(buttonType -> {
-            if (buttonType == ButtonType.OK) {
-                return queryField.getText();
-            }
-            return null;
-        });
-
-        dialog.showAndWait().ifPresent(searchText -> {
-            try {
-                if (searchText.trim().isEmpty()) {
-                    clientTable.setItems(dataManager.getClients());
-                } else {
-                    ObservableList<Client> filtered = dataManager.filterClient(searchText);
-                    clientTable.setItems(filtered);
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        });
-    }
-    @FXML
-    private void handleExportClients() {
-        try {
-            String filename = "clients_export_" + java.time.LocalDate.now() + ".csv";
-            FileExporter.exportToCSV(dataManager.getClients(), filename);
-
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Export Successful");
-            alert.setHeaderText("Clients exported successfully!");
-            alert.setContentText("File saved as: " + filename);
-            alert.showAndWait();
-        } catch (IOException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Export Failed");
-            alert.setHeaderText("Failed to export clients");
-            alert.setContentText(e.getMessage());
             alert.showAndWait();
         }
     }

@@ -1,7 +1,5 @@
-package com.gatarita.games.clientmanagementsystem.database;
+package com.gatarita.games.clientmanagementsystem;
 
-import com.gatarita.games.clientmanagementsystem.models.Client;
-import com.gatarita.games.clientmanagementsystem.models.Project;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -31,27 +29,27 @@ public class DataManager {
                 createTable();
             }
         } catch (SQLException e) {
-            logger.info(e.toString());
+            logger.severe(e.toString());
         }
     }
 
     private void createTable() {
         getConnection();
 
-        String query = "create table if not exists client (id integer not null primary key autoincrement, name text not null, company text, jobTitle text, email, mobile text not null, notes text)";
+        String query = "create table if not exists client (id integer not null primary key autoincrement, name text not null, company text, jobTitle text, email text, mobile text not null, notes text)";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.executeUpdate();
             logger.info("Client table created");
         } catch (SQLException e) {
-            logger.info(e.toString());
+            logger.severe(e.toString());
         }
 
-        String projectQuery = "create table if not exists project (id integer not null primary key autoincrement, name text not null, dueDate text, startedOn text, status text not null, cost real, notes text, clientId integer)";
+        String projectQuery = "create table if not exists project (id integer not null primary key autoincrement, name text not null, dueDate text, startedOn text, completedOn text, cancelledOn text, status text not null, cost real, notes text, cancellationReason text, clientId integer)";
         try (PreparedStatement statement = connection.prepareStatement(projectQuery)) {
             statement.executeUpdate();
             logger.info("Project table created");
         } catch (SQLException e) {
-            logger.info(e.toString());
+            logger.severe(e.toString());
         }
     }
 
@@ -75,7 +73,6 @@ public class DataManager {
             statement.setString(6, client.getNotes());
             statement.executeUpdate();
 
-            // Get the last inserted ID using SQLite's last_insert_rowid()
             Statement idStatement = connection.createStatement();
             ResultSet rs = idStatement.executeQuery("SELECT last_insert_rowid()");
             if (rs.next()) {
@@ -119,7 +116,7 @@ public class DataManager {
             logger.info("Loaded " + clients.size() + " clients from database");
             closeConnection();
         } catch (SQLException e) {
-            logger.info(e.toString());
+            logger.severe(e.toString());
         }
     }
 
@@ -131,6 +128,8 @@ public class DataManager {
             while (rs.next()) {
                 LocalDate dueDate = rs.getString("dueDate") != null ? LocalDate.parse(rs.getString("dueDate")) : null;
                 LocalDate startedOn = rs.getString("startedOn") != null ? LocalDate.parse(rs.getString("startedOn")) : null;
+                LocalDate completedOn = rs.getString("completedOn") != null ? LocalDate.parse(rs.getString("completedOn")) : null;
+                LocalDate cancelledOn = rs.getString("cancelledOn") != null ? LocalDate.parse(rs.getString("cancelledOn")) : null;
                 Project.Status status = Project.Status.valueOf(rs.getString("status"));
 
                 Project project = new Project(
@@ -143,12 +142,15 @@ public class DataManager {
                         rs.getInt("clientId")
                 );
                 project.setId(rs.getInt("id"));
+                project.setCompletedOn(completedOn);
+                project.setCancelledOn(cancelledOn);
+                project.setCancellationReason(rs.getString("cancellationReason"));
                 projects.add(project);
             }
             logger.info("Loaded " + projects.size() + " projects from database");
             closeConnection();
         } catch (SQLException e) {
-            logger.info(e.toString());
+            logger.severe(e.toString());
         }
     }
 
@@ -161,7 +163,7 @@ public class DataManager {
             logger.info("Client " + id + " deleted");
             closeConnection();
         } catch (SQLException e) {
-            logger.info(e.toString());
+            logger.severe(e.toString());
         }
     }
 
@@ -174,7 +176,7 @@ public class DataManager {
             logger.info("Project " + id + " deleted");
             closeConnection();
         } catch (SQLException e) {
-            logger.info(e.toString());
+            logger.severe(e.toString());
         }
     }
 
@@ -191,29 +193,30 @@ public class DataManager {
             statement.setInt(7, client.getId());
             statement.executeUpdate();
             logger.info("Client updated");
-
             closeConnection();
         } catch (SQLException e) {
-            logger.info(e.toString());
+            logger.severe(e.toString());
         }
     }
 
     public void insertProjectToDb(Project project) {
         getConnection();
-        String query = "insert into project (name, dueDate, startedOn, status, cost, notes, clientId) values(?, ?, ?, ?, ?, ?, ?)";
+        String query = "insert into project (name, dueDate, startedOn, completedOn, cancelledOn, status, cost, notes, cancellationReason, clientId) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         PreparedStatement statement = null;
         try {
             statement = connection.prepareStatement(query);
             statement.setString(1, project.getName());
             statement.setString(2, project.getDueDate() != null ? project.getDueDate().toString() : null);
             statement.setString(3, project.getStartedOn() != null ? project.getStartedOn().toString() : null);
-            statement.setString(4, project.getStatus().toString());
-            statement.setDouble(5, project.getCost());
-            statement.setString(6, project.getNotes());
-            statement.setInt(7, project.getClientId());
+            statement.setString(4, project.getCompletedOn() != null ? project.getCompletedOn().toString() : null);
+            statement.setString(5, project.getCancelledOn() != null ? project.getCancelledOn().toString() : null);
+            statement.setString(6, project.getStatus().toString());
+            statement.setDouble(7, project.getCost());
+            statement.setString(8, project.getNotes());
+            statement.setString(9, project.getCancellationReason());
+            statement.setInt(10, project.getClientId());
             statement.executeUpdate();
 
-            // Get the last inserted ID using SQLite's last_insert_rowid()
             Statement idStatement = connection.createStatement();
             ResultSet rs = idStatement.executeQuery("SELECT last_insert_rowid()");
             if (rs.next()) {
@@ -239,30 +242,37 @@ public class DataManager {
 
     public void updateProjectFromDb(Project project) {
         getConnection();
-        String query = "update project set name = ?, dueDate = ?, startedOn = ?, status = ?, cost = ?, notes = ?, clientId = ? where id = ?";
+        String query = "update project set name = ?, dueDate = ?, startedOn = ?, completedOn = ?, cancelledOn = ?, status = ?, cost = ?, notes = ?, cancellationReason = ?, clientId = ? where id = ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, project.getName());
             statement.setString(2, project.getDueDate() != null ? project.getDueDate().toString() : null);
             statement.setString(3, project.getStartedOn() != null ? project.getStartedOn().toString() : null);
-            statement.setString(4, project.getStatus().toString());
-            statement.setDouble(5, project.getCost());
-            statement.setString(6, project.getNotes());
-            statement.setInt(7, project.getClientId());
-            statement.setInt(8, project.getId());
+            statement.setString(4, project.getCompletedOn() != null ? project.getCompletedOn().toString() : null);
+            statement.setString(5, project.getCancelledOn() != null ? project.getCancelledOn().toString() : null);
+            statement.setString(6, project.getStatus().toString());
+            statement.setDouble(7, project.getCost());
+            statement.setString(8, project.getNotes());
+            statement.setString(9, project.getCancellationReason());
+            statement.setInt(10, project.getClientId());
+            statement.setInt(11, project.getId());
             statement.executeUpdate();
             logger.info("Project updated");
             closeConnection();
         } catch (SQLException e) {
-            logger.info(e.toString());
+            logger.severe(e.toString());
         }
     }
 
     public ObservableList<Client> filterClient(String searchText) throws SQLException {
         ObservableList<Client> filtered = FXCollections.observableArrayList();
         getConnection();
-        String query = "SELECT * FROM client WHERE name LIKE ?";
+        String query = "SELECT * FROM client WHERE name LIKE ? OR company LIKE ? OR email LIKE ? OR mobile LIKE ?";
         try (PreparedStatement ps = connection.prepareStatement(query)) {
-            ps.setString(1, "%" + searchText + "%");
+            String searchPattern = "%" + searchText + "%";
+            ps.setString(1, searchPattern);
+            ps.setString(2, searchPattern);
+            ps.setString(3, searchPattern);
+            ps.setString(4, searchPattern);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 Client c = new Client(
@@ -292,13 +302,19 @@ public class DataManager {
                 String name = rs.getString("name");
                 LocalDate dueDate = rs.getString("dueDate") != null ? LocalDate.parse(rs.getString("dueDate")) : null;
                 LocalDate startedOn = rs.getString("startedOn") != null ? LocalDate.parse(rs.getString("startedOn")) : null;
+                LocalDate completedOn = rs.getString("completedOn") != null ? LocalDate.parse(rs.getString("completedOn")) : null;
+                LocalDate cancelledOn = rs.getString("cancelledOn") != null ? LocalDate.parse(rs.getString("cancelledOn")) : null;
                 Project.Status status = Project.Status.valueOf(rs.getString("status"));
                 double cost = rs.getDouble("cost");
                 String notes = rs.getString("notes");
+                String cancellationReason = rs.getString("cancellationReason");
                 int clientId = rs.getInt("clientId");
 
                 Project p = new Project(name, dueDate, startedOn, status, cost, notes, clientId);
                 p.setId(rs.getInt("id"));
+                p.setCompletedOn(completedOn);
+                p.setCancelledOn(cancelledOn);
+                p.setCancellationReason(cancellationReason);
                 filtered.add(p);
             }
         }
@@ -333,7 +349,7 @@ public class DataManager {
             logger.info("Deleted " + deletedProjects + " projects for client " + client.getId());
             closeConnection();
         } catch (SQLException e) {
-            logger.info(e.toString());
+            logger.severe(e.toString());
         }
 
         deleteClientsFromDb(client.getId());

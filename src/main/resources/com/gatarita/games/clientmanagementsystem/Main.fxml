@@ -4,10 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane xmlns="http://javafx.com/javafx/17.0.12"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.gatarita.games.clientmanagementsystem.controllers.MainController">
-
+<BorderPane xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gatarita.games.clientmanagementsystem.MainController">
     <top>
         <VBox style="-fx-border-color: #cccccc; -fx-border-width: 0 0 2 0;">
             <padding>
@@ -17,9 +14,7 @@
                 <padding>
                     <Insets bottom="10" left="10" right="10" top="10" />
                 </padding>
-                <Label style="-fx-font-size: 14; -fx-font-weight: bold;" text="CODEBELL&#10;INC." />
-                <Region HBox.hgrow="ALWAYS" />
-                <Button style="-fx-padding: 5 15 5 15;" text="SETTINGS" />
+                <Label style="-fx-font-size: 16; -fx-font-weight: bold;" text="CODEBELL&#10;INC." />
             </HBox>
             <TabPane fx:id="tabPane" tabClosingPolicy="UNAVAILABLE" tabMinWidth="128.0">
                 <Tab fx:id="projectsTab" closable="false" text="PROJECTS" />
@@ -27,10 +22,4 @@
             </TabPane>
         </VBox>
     </top>
-
-    <!-- ✅ REQUIRED: BorderPane needs a center node -->
-    <center>
-        <VBox />
-    </center>
-
 </BorderPane>
