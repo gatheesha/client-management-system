@@ -13,11 +13,16 @@ import java.time.LocalDate;
 @SuppressWarnings("unchecked")
 public class ProjectsController {
 
-    @FXML private TableView<Project> pendingTable;
-    @FXML private TableView<Project> ongoingTable;
-    @FXML private TableView<Project> completedTable;
-    @FXML private TableView<Project> cancelledTable;
-    @FXML private TextField searchField;
+    @FXML
+    private TableView<Project> pendingTable;
+    @FXML
+    private TableView<Project> ongoingTable;
+    @FXML
+    private TableView<Project> completedTable;
+    @FXML
+    private TableView<Project> cancelledTable;
+    @FXML
+    private TextField searchField;
 
     private DataManager dataManager;
     private ObservableList<Project> pendingProjects;
