@@ -1,26 +1,32 @@
 package com.gatarita.games.clientmanagementsystem;
 
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 
+import java.sql.SQLException;
+
+@SuppressWarnings("unchecked")
 public class ClientsController {
 
     @FXML
     private TableView<Client> clientTable;
+
+    @FXML
+    private TextField searchField;
 
     private DataManager dataManager;
 
     public void setDataManager(DataManager dataManager) {
         this.dataManager = dataManager;
         initializeTable();
+        setupSearchField();
     }
 
     private void initializeTable() {
         clientTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-
-        // Clear existing columns
         clientTable.getColumns().clear();
 
         TableColumn<Client, String> nameCol = new TableColumn<>("NAME");
@@ -48,10 +54,27 @@ public class ClientsController {
         tagsCol.setPrefWidth(200);
 
         clientTable.getColumns().addAll(nameCol, companyCol, jobCol, emailCol, mobileCol, tagsCol);
-
-        // IMPORTANT: Binds the table to the observable list
-        // This automatically updates the table when clients list changes
         clientTable.setItems(dataManager.getClients());
+    }
+
+    private void setupSearchField() {
+        searchField.textProperty().addListener((observable, oldValue, newValue) -> {
+            try {
+                if (newValue == null || newValue.trim().isEmpty()) {
+                    clientTable.setItems(dataManager.getClients());
+                } else {
+                    ObservableList<Client> filtered = dataManager.filterClient(newValue);
+                    clientTable.setItems(filtered);
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Search Error");
+                alert.setHeaderText("Error searching clients");
+                alert.setContentText(e.getMessage());
+                alert.showAndWait();
+            }
+        });
     }
 
     @FXML
@@ -61,7 +84,7 @@ public class ClientsController {
         dialog.setHeaderText("Add a new client");
 
         javafx.scene.layout.VBox content = new javafx.scene.layout.VBox(10);
-//        content.setPadding(new Insets(15));
+        content.setPadding(new Insets(15));
 
         TextField nameField = new TextField();
         nameField.setPromptText("Full Name");
@@ -83,26 +106,52 @@ public class ClientsController {
         notesArea.setPrefRowCount(4);
         notesArea.setWrapText(true);
 
-        content.getChildren().addAll(new Label("Name:"), nameField, new Label("Company:"), companyField, new Label("Job Title:"), jobField, new Label("Email:"), emailField, new Label("Mobile:"), mobileField, new Label("Notes:"), notesArea);
+        content.getChildren().addAll(
+                new Label("Name:"), nameField,
+                new Label("Company:"), companyField,
+                new Label("Job Title:"), jobField,
+                new Label("Email:"), emailField,
+                new Label("Mobile:"), mobileField,
+                new Label("Notes:"), notesArea
+        );
 
         ScrollPane scrollPane = new ScrollPane(content);
         dialog.getDialogPane().setContent(scrollPane);
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
 
         dialog.setResultConverter(buttonType -> {
-            if (buttonType == ButtonType.OK && !nameField.getText().isEmpty()) {
-                return new Client(nameField.getText(), companyField.getText(), jobField.getText(), emailField.getText(), mobileField.getText(), notesArea.getText());
+            if (buttonType == ButtonType.OK && !nameField.getText().isEmpty() && !mobileField.getText().isEmpty()) {
+                return new Client(
+                        nameField.getText(),
+                        companyField.getText(),
+                        jobField.getText(),
+                        emailField.getText(),
+                        mobileField.getText(),
+                        notesArea.getText()
+                );
             }
             return null;
         });
 
-        dialog.showAndWait().ifPresent(client -> dataManager.addClient(client));
+        dialog.showAndWait().ifPresent(client -> {
+            dataManager.addClient(client);
+            clientTable.refresh();
+        });
     }
 
     @FXML
     private void handleDeleteClient() {
         Client selected = clientTable.getSelectionModel().getSelectedItem();
         if (selected != null) {
+            if (selected.getId() <= 0) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText("Cannot delete client");
+                alert.setContentText("Client has invalid ID: " + selected.getId());
+                alert.showAndWait();
+                return;
+            }
+
             Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
             confirm.setTitle("Delete Client");
             confirm.setHeaderText("Delete " + selected.getName() + "?");
@@ -111,6 +160,7 @@ public class ClientsController {
             confirm.showAndWait().ifPresent(response -> {
                 if (response == ButtonType.OK) {
                     dataManager.removeClient(selected);
+                    clientTable.refresh();
                 }
             });
         } else {
@@ -121,15 +171,25 @@ public class ClientsController {
         }
     }
 
+    @FXML
     public void handleEditClient(ActionEvent actionEvent) {
         Client selected = clientTable.getSelectionModel().getSelectedItem();
         if (selected != null) {
+            if (selected.getId() <= 0) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText("Cannot edit client");
+                alert.setContentText("Client has invalid ID: " + selected.getId());
+                alert.showAndWait();
+                return;
+            }
+
             Dialog<Client> dialog = new Dialog<>();
             dialog.setTitle("Edit Client");
             dialog.setHeaderText("Edit " + selected.getName());
 
             javafx.scene.layout.VBox content = new javafx.scene.layout.VBox(10);
-//            content.setPadding(new Insets(15));
+            content.setPadding(new Insets(15));
 
             TextField nameField = new TextField();
             nameField.setPromptText("Full Name");
@@ -157,7 +217,14 @@ public class ClientsController {
             notesArea.setWrapText(true);
             notesArea.setText(selected.getNotes());
 
-            content.getChildren().addAll(new Label("Name:"), nameField, new Label("Company:"), companyField, new Label("Job Title:"), jobField, new Label("Email:"), emailField, new Label("Mobile:"), mobileField, new Label("Notes:"), notesArea);
+            content.getChildren().addAll(
+                    new Label("Name:"), nameField,
+                    new Label("Company:"), companyField,
+                    new Label("Job Title:"), jobField,
+                    new Label("Email:"), emailField,
+                    new Label("Mobile:"), mobileField,
+                    new Label("Notes:"), notesArea
+            );
 
             ScrollPane scrollPane = new ScrollPane(content);
             dialog.getDialogPane().setContent(scrollPane);
@@ -165,14 +232,24 @@ public class ClientsController {
 
             dialog.setResultConverter(buttonType -> {
                 if (buttonType == ButtonType.OK && !nameField.getText().isEmpty()) {
-                    Client updatedClient = new Client(nameField.getText(), companyField.getText(), jobField.getText(), emailField.getText(), mobileField.getText(), notesArea.getText());
+                    Client updatedClient = new Client(
+                            nameField.getText(),
+                            companyField.getText(),
+                            jobField.getText(),
+                            emailField.getText(),
+                            mobileField.getText(),
+                            notesArea.getText()
+                    );
                     updatedClient.setId(selected.getId());
                     return updatedClient;
                 }
                 return null;
             });
 
-            dialog.showAndWait().ifPresent(client -> dataManager.updateClient(selected, client));
+            dialog.showAndWait().ifPresent(client -> {
+                dataManager.updateClient(selected, client);
+                clientTable.refresh();
+            });
 
         } else {
             Alert alert = new Alert(Alert.AlertType.ERROR);

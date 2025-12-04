@@ -10,10 +10,8 @@ public class Client implements Serializable {
     private String email;
     private String mobile;
     private String notes;
-    private static int idCounter = 1;
 
     public Client(String name, String company, String jobTitle, String email, String mobile, String notes) {
-        this.id = idCounter++;
         this.name = name;
         this.company = company;
         this.jobTitle = jobTitle;
@@ -76,5 +74,10 @@ public class Client implements Serializable {
 
     public void setNotes(String notes) {
         this.notes = notes;
+    }
+
+    @Override
+    public String toString() {
+        return name + (company != null && !company.isEmpty() ? " - " + company : "");
     }
 }

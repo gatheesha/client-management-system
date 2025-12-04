@@ -7,17 +7,16 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-
 public class ClientManagementApp extends Application {
-
     @Override
     public void start(Stage primaryStage) throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("Main.fxml"));
         Parent root = loader.load();
+
+        MainController controller = loader.getController();
+
         Scene scene = new Scene(root, 1200, 700);
+        controller.setScene(scene);
 
         Application.setUserAgentStylesheet(new PrimerLight().getUserAgentStylesheet());
 
