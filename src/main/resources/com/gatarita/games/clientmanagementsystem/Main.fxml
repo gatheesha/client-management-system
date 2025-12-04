@@ -14,7 +14,7 @@
                 <padding>
                     <Insets bottom="10" left="10" right="10" top="10" />
                 </padding>
-                <Label style="-fx-font-size: 16; -fx-font-weight: bold;" text="CODEBELL&#10;INC." />
+                <Label style="-fx-font-size: 16; -fx-font-weight: bold;" text="CODEBELL INC." />
             </HBox>
             <TabPane fx:id="tabPane" tabClosingPolicy="UNAVAILABLE" tabMinWidth="128.0">
                 <Tab fx:id="projectsTab" closable="false" text="PROJECTS" />

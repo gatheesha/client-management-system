@@ -84,7 +84,6 @@ public class ClientsController {
         dialog.setHeaderText("Add a new client");
 
         javafx.scene.layout.VBox content = new javafx.scene.layout.VBox(10);
-        content.setPadding(new Insets(15));
 
         TextField nameField = new TextField();
         nameField.setPromptText("Full Name");
@@ -189,7 +188,6 @@ public class ClientsController {
             dialog.setHeaderText("Edit " + selected.getName());
 
             javafx.scene.layout.VBox content = new javafx.scene.layout.VBox(10);
-            content.setPadding(new Insets(15));
 
             TextField nameField = new TextField();
             nameField.setPromptText("Full Name");
