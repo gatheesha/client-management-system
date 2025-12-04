@@ -16,7 +16,6 @@
                 </padding>
                 <Label style="-fx-font-size: 14; -fx-font-weight: bold;" text="CODEBELL&#10;INC." />
                 <Region HBox.hgrow="ALWAYS" />
-                <Button style="-fx-padding: 5 15 5 15;" text="SETTINGS" />
             </HBox>
            <TabPane fx:id="tabPane" maxWidth="1.7976931348623157E308" prefWidth="431.0" tabClosingPolicy="UNAVAILABLE" tabMinWidth="128.0">
                <Tab fx:id="projectsTab" closable="false" text="PROJECTS" />
