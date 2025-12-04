@@ -28,7 +28,7 @@
                 <TableColumn fx:id="jobCol" prefWidth="100" text="JOB" />
                 <TableColumn fx:id="emailCol" prefWidth="200" text="EMAIL" />
                 <TableColumn fx:id="mobileCol" prefWidth="120" text="MOBILE" />
-                <TableColumn fx:id="tagsCol" prefWidth="200" text="TAGS" />
+                <TableColumn fx:id="tagsCol" prefWidth="200" text="NOTES" />
             </columns>
         </TableView>
     </ScrollPane>
