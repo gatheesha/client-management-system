@@ -25,7 +25,7 @@
 
             <VBox spacing="5" style="-fx-border-color: #666666; -fx-border-width: 2; -fx-padding: 10; -fx-background-color: #fafafa;">
                 <Label style="-fx-font-weight: bold; -fx-font-size: 12;" text="NOT STARTED" />
-                <TableView fx:id="pendingTable" prefHeight="120" VBox.vgrow="ALWAYS">
+                <TableView fx:id="pendingTable" prefHeight="100" VBox.vgrow="ALWAYS">
                     <columns>
                         <TableColumn prefWidth="150" text="PROJECT" />
                         <TableColumn prefWidth="100" text="AMOUNT" />
@@ -40,7 +40,7 @@
 
             <VBox spacing="5" style="-fx-border-color: #0066cc; -fx-border-width: 2; -fx-padding: 10; -fx-background-color: #f0f7ff;">
                 <Label style="-fx-font-weight: bold; -fx-font-size: 12; -fx-text-fill: #0066cc;" text="IN PROGRESS" />
-                <TableView fx:id="ongoingTable" prefHeight="120" VBox.vgrow="ALWAYS">
+                <TableView fx:id="ongoingTable" prefHeight="100" VBox.vgrow="ALWAYS">
                     <columns>
                         <TableColumn prefWidth="150" text="PROJECT" />
                         <TableColumn prefWidth="100" text="AMOUNT" />
@@ -55,7 +55,7 @@
 
             <VBox spacing="5" style="-fx-border-color: #009900; -fx-border-width: 2; -fx-padding: 10; -fx-background-color: #f0fff0;">
                 <Label style="-fx-font-weight: bold; -fx-font-size: 12; -fx-text-fill: #009900;" text="COMPLETED" />
-                <TableView fx:id="completedTable" prefHeight="120" VBox.vgrow="ALWAYS">
+                <TableView fx:id="completedTable" prefHeight="100" VBox.vgrow="ALWAYS">
                     <columns>
                         <TableColumn prefWidth="150" text="PROJECT" />
                         <TableColumn prefWidth="100" text="AMOUNT" />
@@ -70,7 +70,7 @@
 
             <VBox spacing="5" style="-fx-border-color: #cc0000; -fx-border-width: 2; -fx-padding: 10; -fx-background-color: #fff5f5;">
                 <Label style="-fx-font-weight: bold; -fx-font-size: 12; -fx-text-fill: #cc0000;" text="CANCELLED" />
-                <TableView fx:id="cancelledTable" prefHeight="120" VBox.vgrow="ALWAYS">
+                <TableView fx:id="cancelledTable" prefHeight="100" VBox.vgrow="ALWAYS">
                     <columns>
                         <TableColumn prefWidth="150" text="PROJECT" />
                         <TableColumn prefWidth="100" text="AMOUNT" />
