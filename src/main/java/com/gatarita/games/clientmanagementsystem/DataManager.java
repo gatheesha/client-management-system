@@ -130,7 +130,7 @@ public class DataManager {
                 LocalDate startedOn = rs.getString("startedOn") != null ? LocalDate.parse(rs.getString("startedOn")) : null;
                 LocalDate completedOn = rs.getString("completedOn") != null ? LocalDate.parse(rs.getString("completedOn")) : null;
                 LocalDate cancelledOn = rs.getString("cancelledOn") != null ? LocalDate.parse(rs.getString("cancelledOn")) : null;
-                Project.Status status = Project.Status.valueOf(rs.getString("status"));
+                Project.Status status = Project.Status.fromDisplayName(rs.getString("status"));
 
                 Project project = new Project(
                         rs.getString("name"),
@@ -210,7 +210,7 @@ public class DataManager {
             statement.setString(3, project.getStartedOn() != null ? project.getStartedOn().toString() : null);
             statement.setString(4, project.getCompletedOn() != null ? project.getCompletedOn().toString() : null);
             statement.setString(5, project.getCancelledOn() != null ? project.getCancelledOn().toString() : null);
-            statement.setString(6, project.getStatus().toString());
+            statement.setString(6, project.getStatus().name());
             statement.setDouble(7, project.getCost());
             statement.setString(8, project.getNotes());
             statement.setString(9, project.getCancellationReason());

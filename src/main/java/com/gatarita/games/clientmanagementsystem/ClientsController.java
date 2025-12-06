@@ -76,7 +76,7 @@ public class ClientsController {
             }
         });
     }
-
+// new client will be added only when we fill everey information except note area
     @FXML
     private void handleNewClient() {
         Dialog<Client> dialog = new Dialog<>();
@@ -134,7 +134,8 @@ public class ClientsController {
 
         dialog.showAndWait().ifPresent(client -> {
             dataManager.addClient(client);
-            clientTable.refresh();
+            //clientTable.refresh();
+            clientTable.setItems(dataManager.getClients());
         });
     }
 
