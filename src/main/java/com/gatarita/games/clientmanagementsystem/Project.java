@@ -24,8 +24,20 @@ public class Project implements Serializable {
         public String toString() {
             return displayName;
         }
-    }
 
+        public static Status fromDisplayName(String displayName) {
+            if (displayName == null) {
+                return PENDING; // Default to PENDING if status is unexpectedly null
+            }
+            for (Status status : Status.values()) {
+                if (status.getDisplayName().equalsIgnoreCase(displayName)) {
+                    return status;
+                }
+            }
+            // If the display name is completely unknown, return a safe default
+            return PENDING;
+        }
+    }
     private int id;
     private String name;
     private LocalDate dueDate;

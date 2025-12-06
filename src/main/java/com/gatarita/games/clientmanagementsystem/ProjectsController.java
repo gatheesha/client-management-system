@@ -1,5 +1,6 @@
 package com.gatarita.games.clientmanagementsystem;
 
+import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -134,8 +135,18 @@ public class ProjectsController {
 
         TableColumn<Project, String> clientCol = new TableColumn<>("CLIENTS");
         clientCol.setCellValueFactory(cellData -> {
-            Client client = dataManager.getClientById(cellData.getValue().getClientId());
-            return new javafx.beans.property.SimpleStringProperty(client != null ? client.getName() : "");
+            Project project = cellData.getValue();
+            if (project == null) {
+                return new SimpleStringProperty("N/A");
+            }
+            Client client = dataManager.getClientById(project.getClientId());
+
+            // This is the crucial null check!
+            if (client != null) {
+                return new SimpleStringProperty(client.getName());
+            } else {
+                return new SimpleStringProperty("Client Not Found");
+            }
         });
         clientCol.setPrefWidth(150);
 
