@@ -4,7 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox spacing="10" style="-fx-background-color: #f5f5f5;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gatarita.games.clientmanagementsystem.ProjectsController">
+<VBox prefHeight="700.0" spacing="10" style="-fx-background-color: #f5f5f5;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gatarita.games.clientmanagementsystem.ProjectsController">
     <padding>
         <Insets bottom="15" left="15" right="15" top="15" />
     </padding>
@@ -17,15 +17,15 @@
         <Button onAction="#handleEditProject" style="-fx-padding: 5 15 5 15;" text="EDIT" />
         <Button onAction="#handleDeleteProject" style="-fx-padding: 5 15 5 15;" text="DELETE" />
         <Region HBox.hgrow="ALWAYS" />
-        <TextField fx:id="searchField" promptText="Search projects..." prefWidth="250" style="-fx-padding: 5 10 5 10;" />
+        <TextField fx:id="searchField" prefWidth="250" promptText="Search projects..." style="-fx-padding: 5 10 5 10;" />
     </HBox>
 
-    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS">
-        <VBox spacing="15" style="-fx-padding: 10;">
+    <ScrollPane fitToWidth="true" VBox.vgrow="NEVER">
+        <VBox prefWidth="233.0" spacing="15" style="-fx-padding: 10;">
 
-            <VBox spacing="5" style="-fx-border-color: #666666; -fx-border-width: 2; -fx-padding: 10; -fx-background-color: #fafafa;">
+            <VBox spacing="5" style="-fx-border-color: #666666; -fx-border-width: 2; -fx-padding: 10; -fx-background-color: #fafafa;" VBox.vgrow="ALWAYS">
                 <Label style="-fx-font-weight: bold; -fx-font-size: 12;" text="NOT STARTED" />
-                <TableView fx:id="pendingTable" prefHeight="100" VBox.vgrow="ALWAYS">
+                <TableView fx:id="pendingTable" minHeight="-Infinity" prefHeight="128.0" VBox.vgrow="ALWAYS">
                     <columns>
                         <TableColumn prefWidth="150" text="PROJECT" />
                         <TableColumn prefWidth="100" text="AMOUNT" />
@@ -35,12 +35,12 @@
                         <TableColumn prefWidth="100" text="STATUS" />
                     </columns>
                 </TableView>
-                <Button onAction="#handleNewProject" prefWidth="150" style="-fx-padding: 3 8 3 8; -fx-font-size: 10;" text="+ NEW ENTRY" />
             </VBox>
 
-            <VBox spacing="5" style="-fx-border-color: #0066cc; -fx-border-width: 2; -fx-padding: 10; -fx-background-color: #f0f7ff;">
+            <VBox spacing="5" style="-fx-border-color: #0066cc; -fx-border-width: 2; -fx-padding: 10; -fx-background-color: #f0f7ff;" VBox.vgrow="ALWAYS">
                 <Label style="-fx-font-weight: bold; -fx-font-size: 12; -fx-text-fill: #0066cc;" text="IN PROGRESS" />
-                <TableView fx:id="ongoingTable" prefHeight="100" VBox.vgrow="ALWAYS">
+
+                <TableView fx:id="ongoingTable" minHeight="-Infinity" prefHeight="128.0" VBox.vgrow="ALWAYS">
                     <columns>
                         <TableColumn prefWidth="150" text="PROJECT" />
                         <TableColumn prefWidth="100" text="AMOUNT" />
@@ -50,12 +50,12 @@
                         <TableColumn prefWidth="100" text="STATUS" />
                     </columns>
                 </TableView>
-                <Button onAction="#handleNewProject" prefWidth="150" style="-fx-padding: 3 8 3 8; -fx-font-size: 10;" text="+ NEW ENTRY" />
             </VBox>
 
-            <VBox spacing="5" style="-fx-border-color: #009900; -fx-border-width: 2; -fx-padding: 10; -fx-background-color: #f0fff0;">
+            <VBox spacing="5" style="-fx-border-color: #009900; -fx-border-width: 2; -fx-padding: 10; -fx-background-color: #f0fff0;" VBox.vgrow="ALWAYS">
                 <Label style="-fx-font-weight: bold; -fx-font-size: 12; -fx-text-fill: #009900;" text="COMPLETED" />
-                <TableView fx:id="completedTable" prefHeight="100" VBox.vgrow="ALWAYS">
+
+                <TableView fx:id="completedTable" minHeight="-Infinity" prefHeight="128.0" VBox.vgrow="ALWAYS">
                     <columns>
                         <TableColumn prefWidth="150" text="PROJECT" />
                         <TableColumn prefWidth="100" text="AMOUNT" />
@@ -65,12 +65,12 @@
                         <TableColumn prefWidth="100" text="STATUS" />
                     </columns>
                 </TableView>
-                <Button onAction="#handleNewProject" prefWidth="150" style="-fx-padding: 3 8 3 8; -fx-font-size: 10;" text="+ NEW ENTRY" />
             </VBox>
 
-            <VBox spacing="5" style="-fx-border-color: #cc0000; -fx-border-width: 2; -fx-padding: 10; -fx-background-color: #fff5f5;">
+            <VBox spacing="5" style="-fx-border-color: #cc0000; -fx-border-width: 2; -fx-padding: 10; -fx-background-color: #fff5f5;" VBox.vgrow="ALWAYS">
                 <Label style="-fx-font-weight: bold; -fx-font-size: 12; -fx-text-fill: #cc0000;" text="CANCELLED" />
-                <TableView fx:id="cancelledTable" prefHeight="100" VBox.vgrow="ALWAYS">
+
+                <TableView fx:id="cancelledTable" minHeight="-Infinity" prefHeight="128.0" VBox.vgrow="ALWAYS">
                     <columns>
                         <TableColumn prefWidth="150" text="PROJECT" />
                         <TableColumn prefWidth="100" text="AMOUNT" />
@@ -80,7 +80,6 @@
                         <TableColumn prefWidth="100" text="STATUS" />
                     </columns>
                 </TableView>
-                <Button onAction="#handleNewProject" prefWidth="150" style="-fx-padding: 3 8 3 8; -fx-font-size: 10;" text="+ NEW ENTRY" />
             </VBox>
         </VBox>
     </ScrollPane>
