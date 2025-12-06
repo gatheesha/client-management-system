@@ -180,6 +180,7 @@ public class ProjectsController {
                 }
             }
         });
+
         clientBox.setButtonCell(new ListCell<Client>() {
             @Override
             protected void updateItem(Client item, boolean empty) {

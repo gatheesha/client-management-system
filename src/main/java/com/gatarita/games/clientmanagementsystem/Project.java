@@ -1,17 +1,33 @@
 package com.gatarita.games.clientmanagementsystem;
-
+/* project class, lots of privet variables, getters and setters for them
+ have a link to client class
+ * */
 import java.io.Serializable;
-import java.time.LocalDate;
+import java.time.LocalDate;// import local date from time API(what is API though??????)
+// what if we get null for LocalDate?????
 
 public class Project implements Serializable {
+
     public enum Status {
         PENDING("Not Started"),
         ONGOING("In Progress"),
         COMPLETED("Completed"),
         CANCELLED("Cancelled");
+/*
+enum : used to define a fixed list of possible values for something(in this case possible values for "status")
+(in this the fixed constants are PENDING,ONGOING,COMPLETED,CANCELLED)
+why enum: its make code cleaner,
+and we can only use the values defined in the enum so it will reduse errors
+*
+ so basically, Status is a data type, not a variable.
+ we can create variabes from data type status (ex:Status taskStatus;)
+ status stores enum type data (ex; Status taskStatus = Status.ONGOING;)
+ but can't have value like: Status invalidTask = "Not Started";
+ */
+        private final String displayName;//private variable inside Status
+        // need a getter and setter which declared bellow
 
-        private final String displayName;
-
+        //constructor for Status and store displayName
         Status(String displayName) {
             this.displayName = displayName;
         }
@@ -38,6 +54,7 @@ public class Project implements Serializable {
     private String cancellationReason;
     private int clientId;
 
+    //constructor for project class
     public Project(String name, LocalDate dueDate, LocalDate startedOn, Status status, double cost, String notes, int clientId) {
         this.name = name;
         this.dueDate = dueDate;
@@ -47,7 +64,7 @@ public class Project implements Serializable {
         this.notes = notes;
         this.clientId = clientId;
     }
-
+    //getters and setters for project class
     public int getId() {
         return id;
     }

@@ -1,11 +1,14 @@
 package com.gatarita.games.clientmanagementsystem;
+/*
+*this control the clients view in user interface(UI) 'literally'!!!!
+Uses DataManager for database or data operations,
+Uses JavaFX Dialogs for input forms
+**/
 
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
 import javafx.scene.control.*;
-
 import java.sql.SQLException;
 
 @SuppressWarnings("unchecked")
@@ -13,12 +16,28 @@ public class ClientsController {
 
     @FXML
     private TableView<Client> clientTable;
+    /*its like private int x;
+
+    * clientTable → the variable name
+    * TableView<Client> → the data type (table of Client objects where that can display rows of data, where each row represents a Client object.)
+    * (JavaFX UI component)
+    */
+
+    /*
+     * what i learned;
+     * @FXML ---> connects the UI (FXML) with your controller code-----the yellow thing in  intelliJ
+     * in .fxml file there is <TableView fx:id="clientTable" />
+     */
 
     @FXML
     private TextField searchField;
 
+    // DataManager handles database operations, the class ClientController don't directly handel data  from the database
+
+    // dataManager is a private variable, type is DataManager which store a dataManager object
     private DataManager dataManager;
 
+    //setter method to inject a DataManager instance(object) into this controller
     public void setDataManager(DataManager dataManager) {
         this.dataManager = dataManager;
         initializeTable();
@@ -118,6 +137,7 @@ public class ClientsController {
         dialog.getDialogPane().setContent(scrollPane);
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
 
+        //Converts dialog input into a Client object.
         dialog.setResultConverter(buttonType -> {
             if (buttonType == ButtonType.OK && !nameField.getText().isEmpty() && !mobileField.getText().isEmpty()) {
                 return new Client(
@@ -132,6 +152,10 @@ public class ClientsController {
             return null;
         });
 
+        //Table Refresh Issues
+        //clientTable.refresh() refreshes table,
+        // but ObservableList must be updated properly in DataManager
+        // -----the client table is not properly refreshed so thetre is an error
         dialog.showAndWait().ifPresent(client -> {
             dataManager.addClient(client);
             clientTable.refresh();
@@ -255,5 +279,13 @@ public class ClientsController {
             alert.setHeaderText("Please select a client to edit");
             alert.showAndWait();
         }
+    }
+
+    public void setSearchField(TextField searchField) {
+        this.searchField = searchField;
+    }
+
+    public void setClientTable(TableView<Client> clientTable) {
+        this.clientTable = clientTable;
     }
 }
