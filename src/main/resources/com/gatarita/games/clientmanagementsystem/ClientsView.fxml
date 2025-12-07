@@ -28,7 +28,7 @@
                 <TableColumn fx:id="jobCol" text="JOB" />
                 <TableColumn fx:id="emailCol" text="EMAIL" />
                 <TableColumn fx:id="mobileCol" text="MOBILE" />
-                <TableColumn fx:id="tagsCol" text="TAGS" />
+                <TableColumn fx:id="tagsCol" text="NOTES" />
             </columns>
         </TableView>
     </ScrollPane>
