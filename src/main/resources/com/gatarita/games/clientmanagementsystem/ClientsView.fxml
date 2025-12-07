@@ -17,18 +17,18 @@
         <Button onAction="#handleEditClient" style="-fx-padding: 5 15 5 15;" text="EDIT" />
         <Button onAction="#handleDeleteClient" style="-fx-padding: 5 15 5 15;" text="DELETE" />
         <Region HBox.hgrow="ALWAYS" />
-        <TextField fx:id="searchField" promptText="Search clients..." prefWidth="250" style="-fx-padding: 5 10 5 10;" />
+        <TextField fx:id="searchField" prefWidth="250" promptText="Search clients..." style="-fx-padding: 5 10 5 10;" />
     </HBox>
 
-    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS">
+    <ScrollPane fitToHeight="true" fitToWidth="true" VBox.vgrow="ALWAYS">
         <TableView fx:id="clientTable">
             <columns>
-                <TableColumn fx:id="nameCol" prefWidth="150" text="NAME" />
-                <TableColumn fx:id="companyCol" prefWidth="150" text="COMPANY" />
-                <TableColumn fx:id="jobCol" prefWidth="100" text="JOB" />
-                <TableColumn fx:id="emailCol" prefWidth="200" text="EMAIL" />
-                <TableColumn fx:id="mobileCol" prefWidth="120" text="MOBILE" />
-                <TableColumn fx:id="tagsCol" prefWidth="200" text="NOTES" />
+                <TableColumn fx:id="nameCol" text="NAME" />
+                <TableColumn fx:id="companyCol" text="COMPANY" />
+                <TableColumn fx:id="jobCol" text="JOB" />
+                <TableColumn fx:id="emailCol" text="EMAIL" />
+                <TableColumn fx:id="mobileCol" text="MOBILE" />
+                <TableColumn fx:id="tagsCol" text="TAGS" />
             </columns>
         </TableView>
     </ScrollPane>
